@@ -1,7 +1,10 @@
 module ActsAsAppointment
   
-  def acts_as_appointment
-    include ClassMethods
+  def acts_as_appointment(val1, val2)
+    class_eval do 
+      attr_accessible val1.to_sym, val2.to_sym
+      include ClassMethods
+    end
   end
 
   module ClassMethods
