@@ -1,8 +1,8 @@
 module ActsAsAppointment
-  
+  @val1 = ""
+  @val2 = ""
   def acts_as_appointment(val1, val2)
     class_eval do 
-      attr_accessible val1.to_sym, val2.to_sym
       include ClassMethods
     end
   end
@@ -16,11 +16,12 @@ module ActsAsAppointment
     end
 
     def validate_schedule
-      from, to = get_attributes
-      if from[1] > to[1]
+      @val1, @val2 = get_attributes
+      if @val1[1] > @val2[1]
         errors.add(:appointment_time, "Invalid appointment time selected") 
       end
     end
+    
     def get_attributes
       self.attributes.take(3).drop(1)
     end
