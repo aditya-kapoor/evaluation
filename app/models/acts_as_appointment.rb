@@ -11,15 +11,22 @@ module ActsAsAppointment
 
     def self.included(klass)
       klass.instance_eval do
-        validate :validate_schedule
+        validate :validate_schedule, :check_for_valid_time_slot
       end
     end
 
     def validate_schedule
       from, to = get_attributes[0], get_attributes[1]
       if from > to
-        errors.add(:appointment_time, "Invalid appointment time selected") 
+        errors.add("#{self.class.to_s.parameterize}_time".to_sym, "Invalid appointment time selected") 
       end
+    end
+
+    def check_for_valid_time_slot
+      selected_appointments = self.class.to_s.constantize.where("#{$val2.to_s} > ?", self.attributes[$val1.to_s])
+      if selected_appointments.any?
+        errors.add("#{self.class.to_s.parameterize}_slot".to_sym, "This #{self.class.to_s} is Clashing with some other #{self.class.to_s}")
+      end   
     end
     
     def get_attributes
